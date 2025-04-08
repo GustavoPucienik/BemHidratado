@@ -4,40 +4,52 @@ import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
+  const isDark = colorScheme === 'dark';
+  const activeColor = isDark ? '#111' : '#fff';
+  const inactiveColor = isDark ? '#888' : '#ccc';
+  const backgroundColor = isDark ? '#111' : '#0aaaff';
+  
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
+        tabBarActiveTintColor: activeColor,
+        tabBarInactiveTintColor: inactiveColor,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+        tabBarStyle: {
+          backgroundColor,
+          borderTopWidth: 1,
+          borderTopColor: isDark ? '#333' : '#000',
+          height: 60,
+          paddingBottom: Platform.OS === 'ios' ? 10 : 8,
+          paddingTop: 10,
+        },
+        tabBarShowLabel: false,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="drop.fill" size={28} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="ajustar"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Ajustes',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="notif.fill" size={28} color={color} />
+          ),
         }}
       />
     </Tabs>

@@ -15,7 +15,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.guspucienik.BemHidratado",
+      "permissions": [
+          "NOTIFICATIONS"
+        ]
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +40,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5060cb94-67f8-4cbc-b8ca-0ca428e37359"
+      }
     }
   }
 }
