@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
-  const [copos, setCopos] = useState(0);
+  const [quantidade, setQuantidade] = useState(0);
 
-  const beberAgua = () => {
-    setCopos(prev => prev + 250);
+  const beberAgua = async () => {
+    setQuantidade(prev => prev + 250);
+    await AsyncStorage.setItem('WaterConsumed', JSON.stringify(quantidade));
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>💧 Bem Hidratado</Text>
-      <Text style={styles.subtext}>Copos de água hoje:</Text>
-      <Text style={styles.counter}>{copos}ml</Text>
+      <Text style={styles.subtext}>Quantidade de água hoje:</Text>
+      <Text style={styles.counter}>{quantidade}ml</Text>
 
       <Button title="Beber Água" onPress={beberAgua} />
     </View>

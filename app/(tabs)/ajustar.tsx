@@ -14,7 +14,7 @@ Notifications.setNotificationHandler({
 
 
 export default function Ajustes() {
-  const [intervalo, setIntervalo] = useState<number>(60);
+  const [intervaloValue, setIntervaloValue] = useState<number>(60);
   const [lembreteAtivo, setLembreteAtivo] = useState(false);
   const [valorSalvo, setValorSalvo] = useState<number | null>(null);
 
@@ -38,7 +38,7 @@ export default function Ajustes() {
       // Verificação normal
       const salvo = await AsyncStorage.getItem('waterTime');
       if (salvo) {
-        setIntervalo(JSON.parse(salvo));
+        setIntervaloValue(JSON.parse(salvo));
         setValorSalvo(JSON.parse(salvo));
       }
 
@@ -48,71 +48,65 @@ export default function Ajustes() {
 
     carregarDados();
     console.log(valorSalvo)
-    console.log(intervalo)
+    console.log(intervaloValue)
   }, []);
 
-  useEffect(() => {
-   async function loopingNotif() {
-    if(lembreteAtivo === true){
-      const quantidade = 10;
+  const agendarLembretes = async (intervalo: number) => {
+    const notificacoes = await Notifications.getAllScheduledNotificationsAsync();
   
-      const agora = new Date();
-    
-      for (let i = 1; i <= quantidade; i++) {
-        const proxima = new Date(agora.getTime() + i * intervalo * 60 * 1000);
-        proxima.setSeconds(0); // deixa redondinho
-    
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: 'Hora de beber água 💧',
-            body: 'Bora se hidratar!',
-          },
-          trigger: proxima as any,
-        });
-      }
+    if (notificacoes.length > 0) {
+      console.log("⚠️ Já existem notificações agendadas. Nada será criado.");
+      return;
     }
-   }
-   loopingNotif();
-  },[lembreteAtivo])
+  const intervaloSeconds = intervalo * 60
+    const quantidade = 10;
+  
+    for (let i = 1; i <= quantidade; i++) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Hora de beber água 💧',
+          body: 'Bora se hidratar!',
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: i * intervaloSeconds,
+          repeats: false,
+        },
+      });
+    }
+  
+    console.log('✅ Notificações agendadas com sucesso!');
+  };
+  
+  const ativarLembrete = async () => {
+    console.log("Ativar lembrete iniciado");
+  
+    await AsyncStorage.setItem('waterTime', JSON.stringify(intervaloValue));
+    setValorSalvo(intervaloValue);
+    setLembreteAtivo(true);
+  
+    await agendarLembretes(intervaloValue);
+  
+    Alert.alert('Lembrete ativado', `Você será lembrado a cada ${intervaloValue} minutos.`);
+  };
 
   const atualizarLembrete = async () => {
-    const proxima = new Date(Date.now() + intervalo * 60 * 1000);
-    proxima.setSeconds(0);
-  
     await Notifications.cancelAllScheduledNotificationsAsync();
-  
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Hora de beber água 💧',
-        body: 'Bora se hidratar!',
-      },
-      trigger: proxima as any,
-    });
-  
-    await AsyncStorage.setItem('waterTime', JSON.stringify(intervalo));
-    setValorSalvo(intervalo);
-    Alert.alert('Lembrete atualizado', `Agora será a cada ${intervalo} minutos.`);
-  };
-  
 
-
-  const ativarLembrete = async () => {
-    console.log("Ativar lembrete iniciado")
-    setLembreteAtivo(true);
-    await AsyncStorage.setItem('waterTime', JSON.stringify(intervalo));
-    setValorSalvo(intervalo);
-    Alert.alert('Lembrete ativado', `Você será lembrado a cada ${intervalo} minutos.`);
+    await AsyncStorage.setItem('waterTime', JSON.stringify(intervaloValue));
+    setValorSalvo(intervaloValue);
+    await agendarLembretes(intervaloValue);
+  
+    Alert.alert('Lembrete atualizado', `Agora será a cada ${intervaloValue} minutos.`);
   };
-  
-  
   
 
   const desativarLembrete = async () => {
     console.log("Desativar lembrete iniciado")
-    await Notifications.cancelAllScheduledNotificationsAsync();
     AsyncStorage.removeItem('waterTime')
     setValorSalvo(null);
     setLembreteAtivo(false);
+    await Notifications.cancelAllScheduledNotificationsAsync();
     Alert.alert('Lembrete desativado', 'Você não receberá mais notificações.');
   };
 
@@ -137,15 +131,15 @@ export default function Ajustes() {
       <Text style={styles.label}>Intervalo entre lembretes {`${valorSalvo? valorSalvo +" minutos": ""}`}</Text>
       <View style={styles.pickerContainer}>
         <Picker
-          selectedValue={intervalo}
-          onValueChange={(itemValue) => setIntervalo(itemValue)}
+          selectedValue={intervaloValue}
+          onValueChange={(itemValue) => setIntervaloValue(itemValue)}
           style={styles.picker}
           dropdownIconColor="#333"
         >
           <Picker.Item label="1 minuto" value={1} />
+          <Picker.Item label="5 minuto" value={5} />
           <Picker.Item label="30 minutos" value={30} />
           <Picker.Item label="1 hora" value={60} />
-          <Picker.Item label="1 hora e 30 min." value={90} />
           <Picker.Item label="2 horas" value={120} />
         </Picker>
       </View>
@@ -155,7 +149,7 @@ export default function Ajustes() {
           {lembreteAtivo ? 'Desativar lembrete' : 'Ativar lembrete'}
         </Text>
       </TouchableOpacity>
-      {lembreteAtivo && intervalo != valorSalvo && (
+      {lembreteAtivo && intervaloValue != valorSalvo && (
         <TouchableOpacity style={[styles.button, { backgroundColor: '#34c759', marginTop: 16 }]} onPress={atualizarLembrete}>
           <Text style={styles.buttonText}>
             Salvar novo intervalo
