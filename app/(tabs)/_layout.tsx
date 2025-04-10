@@ -4,7 +4,6 @@ import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
@@ -14,7 +13,7 @@ export default function TabLayout() {
   const activeColor = isDark ? '#111' : '#fff';
   const inactiveColor = isDark ? '#888' : '#ccc';
   const backgroundColor = isDark ? '#111' : '#0aaaff';
-  
+
 
   return (
     <Tabs
@@ -44,14 +43,33 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ajustar"
+        name="agendados"
         options={{
-          title: 'Ajustes',
+          title: 'Agendados',
           tabBarIcon: ({ color }) => (
             <IconSymbol name="notif.fill" size={28} color={color} />
           ),
         }}
       />
+      <Tabs.Screen
+        name="ajustar"
+        options={{
+          title: 'Ajustes',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="alarm.fill" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="config"
+        options={{
+          title: 'Config',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="gear" size={28} color={color} />
+          ),
+        }}
+      />
+
     </Tabs>
   );
 }

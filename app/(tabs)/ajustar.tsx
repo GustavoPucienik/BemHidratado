@@ -58,26 +58,27 @@ export default function Ajustes() {
       console.log("⚠️ Já existem notificações agendadas. Nada será criado.");
       return;
     }
+  
     const quantidade = 10;
     const agora = new Date();
+  
     for (let i = 1; i <= quantidade; i++) {
-      const proximoHorario = new Date(agora.getTime() + i * intervalo * 60 * 1000); // intervalo em minutos
+      const proximoHorario = new Date(agora.getTime() + i * intervalo * 60 * 1000);
+      console.log("proximoHorario: ")
+      console.log(proximoHorario)
+  
       await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Hora de beber água 💧',
           body: 'Bora se hidratar!',
         },
-        trigger: {
-          hour: proximoHorario.getHours(),
-          minute: proximoHorario.getMinutes(),
-          repeats: false, // porque cada notificação é única
-        } as any,
+        trigger: proximoHorario as any,
       });
     }
-    
   
     console.log('✅ Notificações agendadas com sucesso!');
   };
+  
   
   const ativarLembrete = async () => {
     console.log("Ativar lembrete iniciado");

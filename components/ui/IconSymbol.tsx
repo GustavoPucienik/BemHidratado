@@ -11,7 +11,8 @@ const MAPPING = {
   // See SF Symbols in the SF Symbols app on Mac.
   'gearshape.fill': 'settings',
   'drop.fill': 'water-drop',
-  'notif.fill':'notifications'
+  'notif.fill':'notifications',
+  'alarm.fill': 'access-alarm'
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
