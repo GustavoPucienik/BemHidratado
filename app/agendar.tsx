@@ -1,46 +1,77 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
-import TimePickerCarousel from '@/components/TimePickerCarousel'; // seu componente customizado
+import TimePickerCarousel from '@/components/TimePickerCarousel';
+import { useRouter } from 'expo-router';
 
-const Agendar = () => {
-  const [selectedHour, setSelectedHour] = useState('12');
-  const [selectedMinute, setSelectedMinute] = useState('00');
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
-  const agendarNotificacao = async () => {
-    const now = new Date();
-    const agendado = new Date();
-    agendado.setHours(parseInt(selectedHour));
-    agendado.setMinutes(parseInt(selectedMinute));
-    agendado.setSeconds(0);
+export default function agendar() {
+  const [selectedHour, setSelectedHour] = useState<number | null>(null);
+  const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
+  const router = useRouter();
 
-    if (agendado <= now) {
-      agendado.setDate(agendado.getDate() + 1); // agenda para o próximo dia
-    }
+  useEffect(() => {
+    const configurarNotificacoes = async () => {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Lembretes de hidratação',
+        importance: Notifications.AndroidImportance.HIGH,
+        sound: 'default',
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#007aff',
+      });
+
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
+        Alert.alert('Permissão negada', 'As notificações estão desativadas.');
+        return;
+      }
+    };
+
+    configurarNotificacoes();
+  }, []);
+
+  const handleNotify = async (selectedHour: number, selectedMinute: number) => {
+    const notificacoes = await Notifications.getAllScheduledNotificationsAsync();
+
+    const agora = new Date()
+    const proximoHorario = new Date(
+      agora.getFullYear(),
+      agora.getMonth(),
+      agora.getDate(),
+      selectedHour, // hora
+      selectedMinute   // minuto
+    );
+    console.log("proximoHorario: ", proximoHorario);
 
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "Hora de se hidratar 💧",
-        body: "Não se esqueça de beber água!",
+        title: 'Hora de beber água 💧',
+        body: 'Bora se hidratar!',
       },
-      trigger: {
-        hour: agendado.getHours(),
-        minute: agendado.getMinutes(),
-        repeats: true,
-      },
-      
+      trigger: proximoHorario as any,
     });
 
-    Alert.alert("Agendado!", `Notificação marcada para ${selectedHour}:${selectedMinute}`);
-
-    // volta para tela de agendados
-    router.push('/(tabs)/agendados');
+    console.log('✅ Notificações agendadas com sucesso!');
+    router.push('/(tabs)/agendados')
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Agendar Notificação</Text>
+      <Text style={styles.title}>Notificações</Text>
 
       <TimePickerCarousel
         hour={selectedHour}
@@ -48,29 +79,53 @@ const Agendar = () => {
         setHour={setSelectedHour}
         setMinute={setSelectedMinute}
       />
+      {(selectedHour !== null && selectedMinute !== null) && (
+        <Text style={styles.horarioTexto}>
+          Selecionado: {selectedHour.toString().padStart(2, '0')}:
+          {selectedMinute.toString().padStart(2, '0')}
+        </Text>
+      )}
 
-      <TouchableOpacity style={styles.button} onPress={agendarNotificacao}>
-        <Text style={styles.buttonText}>Adicionar</Text>
+      <TouchableOpacity style={styles.button} onPress={() => handleNotify(selectedHour, selectedMinute)}>
+        <Text style={styles.buttonText}>Agendar</Text>
       </TouchableOpacity>
+
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, marginTop: 15, backgroundColor: '#fff', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
   button: {
+    backgroundColor: '#007aff',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
     marginTop: 30,
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  horarioTexto: {
+    marginTop: 20,
+    fontSize: 16,
+    color: '#333',
   },
 });
-
-export default Agendar;

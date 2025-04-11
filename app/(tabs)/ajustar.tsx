@@ -4,13 +4,6 @@ import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true, // mostra a notificação no app
-    shouldPlaySound: true, // toca som (se configurado)
-    shouldSetBadge: false, // ícone com número, só iOS
-  }),
-});
 
 
 export default function Ajustes() {

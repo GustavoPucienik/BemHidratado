@@ -2,14 +2,14 @@ import React from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface Props {
-  hour: string;
-  minute: string;
-  setHour: (val: string) => void;
-  setMinute: (val: string) => void;
+  hour: number;
+  minute: number;
+  setHour: (val: number) => void;
+  setMinute: (val: number) => void;
 }
 
 const generateNumbers = (max: number) =>
-  Array.from({ length: max }, (_, i) => i.toString().padStart(2, '0'));
+  Array.from({ length: max }, (_, i) => i.toString().padStart(2, 0));
 
 const TimePickerCarousel: React.FC<Props> = ({ hour, minute, setHour, setMinute }) => {
   const hours = generateNumbers(24);
