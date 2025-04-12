@@ -1,18 +1,16 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useTheme } from '../contexts/ThemeContext'; // Certifique-se do caminho correto
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
-  const isDark = colorScheme === 'dark';
-  const activeColor = isDark ? '#111' : '#fff';
+  const { isDark } = useTheme();
+  const activeColor = isDark ? '#fff' : '#fff';
   const inactiveColor = isDark ? '#888' : '#ccc';
   const backgroundColor = isDark ? '#111' : '#0aaaff';
+  const tabBorderTopColor = isDark ? '#fff' : '#000';
 
 
   return (
@@ -25,7 +23,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor,
           borderTopWidth: 1,
-          borderTopColor: isDark ? '#333' : '#000',
+          borderTopColor: tabBorderTopColor,
           height: 60,
           paddingBottom: Platform.OS === 'ios' ? 10 : 8,
           paddingTop: 10,
@@ -52,24 +50,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ajustar"
-        options={{
-          title: 'Ajustes',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol name="alarm.fill" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="config"
         options={{
           title: 'Config',
           tabBarIcon: ({ color }) => (
-            <IconSymbol name="gear" size={28} color={color} />
+            <IconSymbol name="gears.fill" size={28} color={color} />
           ),
         }}
       />
-
     </Tabs>
   );
 }

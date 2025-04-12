@@ -6,7 +6,7 @@ Aplicativo simples feito em React Native com Expo, que envia notificações para
 
 ## 📱 Funcionalidades
 
-- Definir o intervalo entre lembretes (ex: a cada 30, 60, 90 minutos)
+- Agendar lembretes
 - Ativar ou desativar os lembretes
 - Salvar o intervalo escolhido localmente
 - Notificações nativas com som e alerta

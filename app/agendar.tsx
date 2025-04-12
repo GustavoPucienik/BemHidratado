@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import TimePickerCarousel from '@/components/TimePickerCarousel';
 import { useRouter } from 'expo-router';
+import { useTheme } from './contexts/ThemeContext';
+import BtnPrimary from '@/components/Buttons/BtnPrimary';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -13,6 +15,8 @@ Notifications.setNotificationHandler({
 });
 
 export default function agendar() {
+  const { isDark, toggleTheme } = useTheme();
+  const styles = getStyles(isDark);
   const [selectedHour, setSelectedHour] = useState<number | null>(null);
   const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
   const router = useRouter();
@@ -86,46 +90,49 @@ export default function agendar() {
         </Text>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={() => handleNotify(selectedHour, selectedMinute)}>
-        <Text style={styles.buttonText}>Agendar</Text>
-      </TouchableOpacity>
+      <BtnPrimary
+        onPress={() => handleNotify(selectedHour, selectedMinute)}
+        title="Agendar">
+      </BtnPrimary>
 
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#007aff',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 30,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  horarioTexto: {
-    marginTop: 20,
-    fontSize: 16,
-    color: '#333',
-  },
-});
+const getStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark ? '#121212' : '#ffffff',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: isDark ? '#ffffff' : '#000000',
+    },
+    button: {
+      backgroundColor: '#007aff',
+      padding: 14,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 30,
+      shadowColor: isDark ? '#000' : '#000',
+      shadowOpacity: isDark ? 0.5 : 0.1,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    buttonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    horarioTexto: {
+      marginTop: 20,
+      fontSize: 16,
+      color: isDark ? '#dddddd' : '#333333',
+    },
+  });

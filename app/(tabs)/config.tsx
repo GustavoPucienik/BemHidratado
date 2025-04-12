@@ -1,8 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import BtnPrimary from '@/components/Buttons/BtnPrimary';
+import BtnSecondary from '@/components/Buttons/BtnSecondary';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Config = () => {
+  const { isDark, toggleTheme } = useTheme();
+  const styles = getStyles(isDark);
+  
   const limparLembretes = async () => {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
@@ -17,27 +23,34 @@ const Config = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Configurações</Text>
 
-      <TouchableOpacity style={styles.button} onPress={limparLembretes}>
-        <Text style={styles.buttonText}>Limpar Lembretes</Text>
-      </TouchableOpacity>
+      <BtnPrimary
+        title="Alternar tema"
+        onPress={toggleTheme}
+      />
+
+      <BtnSecondary
+        title="Limpar Lembretes"
+        onPress={limparLembretes}
+      />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 30 },
-  button: {
-    backgroundColor: '#ff3b30',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+const getStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: isDark ? '#3c3c3c' : '#ffffff',
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 30,
+      color: isDark ? '#fff' : '#000',
+    },
+  });
+
 
 export default Config;
