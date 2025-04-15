@@ -75,7 +75,12 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>💧 Bem Hidratado</Text>
       <Text style={styles.subtext}>Quantidade de água hoje:</Text>
-      <Text style={styles.counter}>{quantidade}ml</Text>
+      <Text style={styles.counter}>
+        {quantidade >= 1000
+          ? `${(quantidade / 1000).toFixed(2)} litros`
+          : `${quantidade}ml`}
+      </Text>
+
       <BtnPrimary
         title="Beber água"
         onPress={beberAgua}

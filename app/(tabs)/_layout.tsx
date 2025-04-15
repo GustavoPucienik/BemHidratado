@@ -41,9 +41,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="agendados"
+        name="schedule"
         options={{
-          title: 'Agendados',
+          title: 'Agendar',
           tabBarIcon: ({ color }) => (
             <IconSymbol name="notif.fill" size={28} color={color} />
           ),

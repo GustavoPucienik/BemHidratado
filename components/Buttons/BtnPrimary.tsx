@@ -16,7 +16,7 @@ export default function BtnPrimary({ title, onPress }: BtnPrimaryProps) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#007aff',
+    backgroundColor: '#0aaaff',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',

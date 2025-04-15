@@ -1,25 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, FlatList, StyleSheet} from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from './contexts/ThemeContext';
 import BtnPrimary from '@/components/Buttons/BtnPrimary';
+import { useFocusEffect, useRouter } from 'expo-router';
 
-const Agendados = () => {
+
+const Scheduleds = () => {
   const { isDark } = useTheme();
   const styles = getStyles(isDark);
   const [notificacoes, setNotificacoes] = useState<any[]>([]);
-  const navigation = useNavigation();
+  const router = useRouter();
 
-  useEffect(() => {
-    const carregarNotificacoes = async () => {
-      const notificacoesAgendadas = await Notifications.getAllScheduledNotificationsAsync();
-      setNotificacoes(notificacoesAgendadas);
-    };
-
-    const unsubscribe = navigation.addListener('focus', carregarNotificacoes);
-    return unsubscribe;
-  }, [navigation]);
+  useFocusEffect(
+    useCallback(() => {
+      const carregarNotificacoes = async () => {
+        const notificacoesAgendadas = await Notifications.getAllScheduledNotificationsAsync();
+        console.log(notificacoesAgendadas)
+        setNotificacoes(notificacoesAgendadas);
+      };
+  
+      carregarNotificacoes();
+    }, [])
+  );
+  
 
   const renderItem = ({ item }: { item: any }) => {
     const horario = new Date(item.trigger.value);
@@ -39,9 +43,11 @@ const Agendados = () => {
         <View style={styles.emptyBox}>
           <Text style={styles.emptyText}>Você ainda não agendou nenhuma notificação.</Text>
           <Text style={styles.emptySub}>Toque no botão abaixo para agendar uma!</Text>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('agendar')}>
-            <Text style={styles.buttonText}>Agendar</Text>
-          </TouchableOpacity>
+          
+          <BtnPrimary
+            title='Agendar nova'
+            onPress={() => router.push('scheduleSingle')}
+          />
         </View>
       ) : (
         <>
@@ -52,7 +58,7 @@ const Agendados = () => {
           />
           <BtnPrimary
             title='Agendar nova'
-            onPress={() => navigation.native('agendar')}
+            onPress={() => router.push('scheduleSingle')}
           />
         </>
       )}
@@ -128,4 +134,4 @@ const getStyles = (isDark: boolean) =>
     },
   });
 
-export default Agendados;
+export default Scheduleds;

@@ -14,7 +14,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function agendar() {
+export default function agendarTime() {
   const { isDark, toggleTheme } = useTheme();
   const styles = getStyles(isDark);
   const [selectedHour, setSelectedHour] = useState<number | null>(null);
@@ -59,6 +59,11 @@ export default function agendar() {
       selectedHour, // hora
       selectedMinute   // minuto
     );
+    
+    // Se o horário já passou hoje, agende para amanhã
+    if(agora > proximoHorario ){
+      proximoHorario.setDate(proximoHorario.getDate() + 1);
+    }
     console.log("proximoHorario: ", proximoHorario);
 
     await Notifications.scheduleNotificationAsync({
@@ -70,12 +75,12 @@ export default function agendar() {
     });
 
     console.log('✅ Notificações agendadas com sucesso!');
-    router.push('/(tabs)/agendados')
+    router.push('/(tabs)/schedule')
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notificações</Text>
+      <Text style={styles.title}>Agendar notificação</Text>
 
       <TimePickerCarousel
         hour={selectedHour}
@@ -103,32 +108,17 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? '#121212' : '#ffffff',
+      backgroundColor: isDark ? '#3c3c3c' : '#ffffff',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 20,
+      padding: 20,
+      paddingTop: 30,
     },
     title: {
       fontSize: 28,
       fontWeight: 'bold',
       marginBottom: 20,
       color: isDark ? '#ffffff' : '#000000',
-    },
-    button: {
-      backgroundColor: '#007aff',
-      padding: 14,
-      borderRadius: 8,
-      alignItems: 'center',
-      marginTop: 30,
-      shadowColor: isDark ? '#000' : '#000',
-      shadowOpacity: isDark ? 0.5 : 0.1,
-      shadowRadius: 6,
-      elevation: 3,
-    },
-    buttonText: {
-      color: '#ffffff',
-      fontSize: 16,
-      fontWeight: '600',
     },
     horarioTexto: {
       marginTop: 20,
