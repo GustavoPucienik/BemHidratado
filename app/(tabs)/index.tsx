@@ -20,6 +20,22 @@ export default function HomeScreen() {
   const { isDark } = useTheme();
   const styles = getStyles(isDark);
 
+    const verificarDataECarregar = async () => {
+      const dataHoje = new Date().toDateString(); // exemplo: "Sun Apr 14 2025"
+      const dataSalva = await AsyncStorage.getItem('DataUltimaHidratacao');
+      const quantidadeSalva = await AsyncStorage.getItem('WaterConsumed');
+  
+      if (dataSalva !== dataHoje) {
+        // Novo dia, zera a quantidade
+        setQuantidade(0);
+        await AsyncStorage.setItem('WaterConsumed', '0');
+        await AsyncStorage.setItem('DataUltimaHidratacao', dataHoje);
+      } else if (quantidadeSalva !== null) {
+        // Mesmo dia, carrega a quantidade normalmente
+        setQuantidade(JSON.parse(quantidadeSalva));
+      }
+    };
+
   useEffect(() => {
     const configurarNotificacoes = async () => {
       // Criar canal de notificação (requerido no Android)
@@ -58,6 +74,8 @@ export default function HomeScreen() {
         setQuantidade(JSON.parse(valorSalvo));
       }
     };
+
+    verificarDataECarregar();
 
     carregarQuantidade();
   }, []);

@@ -13,12 +13,12 @@ export default function Agendar() {
     { title: 'Ver agendados', rota: 'scheduleds' },
     { title: 'Agendar uma vez', rota: 'scheduleSingle' },
     { title: 'Agendar diariamente', rota: 'scheduleDaily' },
-    { title: 'Agendar em ciclos', rota: '/' },
+    { title: 'Agendar em ciclos', rota: '/scheduleDaily' },
   ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Escolha o tipo de agendamento</Text>
+      <Text style={styles.title}>Escolha o agendamento</Text>
       {options.map((opcao, index) => (
         <View 
           style={styles.opcao}

@@ -16,7 +16,17 @@ const Scheduleds = () => {
     useCallback(() => {
       const carregarNotificacoes = async () => {
         const notificacoesAgendadas = await Notifications.getAllScheduledNotificationsAsync();
-        console.log(notificacoesAgendadas)
+        for (let i = 0; i < notificacoesAgendadas.length; i++) {
+          console.log(` `)
+          console.log(`Notificação ${i+1}`)
+          console.log(`Conteudo: `)
+          console.log(notificacoesAgendadas[i].content)
+          console.log(`Id: `)
+          console.log(notificacoesAgendadas[i].identifier)
+          console.log(`trigger: `)
+          console.log(notificacoesAgendadas[i].trigger)
+          
+        }
         setNotificacoes(notificacoesAgendadas);
       };
   
@@ -57,7 +67,7 @@ const Scheduleds = () => {
             renderItem={renderItem}
           />
           <BtnPrimary
-            title='Agendar nova'
+            title='Agendar'
             onPress={() => router.push('scheduleSingle')}
           />
         </>
@@ -97,7 +107,6 @@ const getStyles = (isDark: boolean) =>
     emptyBox: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
     },
     emptyText: {
       fontSize: 18,
@@ -111,26 +120,6 @@ const getStyles = (isDark: boolean) =>
       color: isDark ? '#aaaaaa' : '#666666',
       marginVertical: 10,
       textAlign: 'center',
-    },
-    button: {
-      marginTop: 'auto',
-      backgroundColor: '#007AFF',
-      paddingVertical: 12,
-      paddingHorizontal: 30,
-      borderRadius: 10,
-    },
-    buttonBottom: {
-      marginTop: 3,
-      alignSelf: 'center',
-      backgroundColor: '#007AFF',
-      paddingVertical: 12,
-      paddingHorizontal: 40,
-      borderRadius: 10,
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 16,
-      fontWeight: 'bold',
     },
   });
 

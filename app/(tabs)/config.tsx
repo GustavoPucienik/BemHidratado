@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import BtnPrimary from '@/components/Buttons/BtnPrimary';
 import BtnSecondary from '@/components/Buttons/BtnSecondary';
@@ -27,7 +27,6 @@ const Config = () => {
         title="Alternar tema"
         onPress={toggleTheme}
       />
-
       <BtnSecondary
         title="Limpar Lembretes"
         onPress={limparLembretes}
@@ -40,15 +39,15 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
       backgroundColor: isDark ? '#3c3c3c' : '#ffffff',
+      padding: 20,
     },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      marginBottom: 30,
+      marginVertical: 30,
       color: isDark ? '#fff' : '#000',
+      marginBottom: 'auto',
     },
   });
 

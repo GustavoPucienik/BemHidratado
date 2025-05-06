@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import TimePickerCarousel from '@/components/TimePickerCarousel';
 import { useRouter } from 'expo-router';
 import { useTheme } from './contexts/ThemeContext';
 import BtnPrimary from '@/components/Buttons/BtnPrimary';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -14,11 +15,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function agendarTime() {
+export default function AgendarTime() {
   const { isDark, toggleTheme } = useTheme();
-  const styles = getStyles(isDark);
-  const [selectedHour, setSelectedHour] = useState<number | null>(null);
-  const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
+  const styles = getStyles(isDark); 
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateMode, setDateMode] = useState('date')
   const router = useRouter();
 
   useEffect(() => {
@@ -48,21 +50,31 @@ export default function agendarTime() {
     configurarNotificacoes();
   }, []);
 
-  const handleNotify = async (selectedHour: number, selectedMinute: number) => {
-    const notificacoes = await Notifications.getAllScheduledNotificationsAsync();
+  const handleDateChange = (event: any, date?: Date) => {
+    setShowDatePicker(false);
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
 
-    const agora = new Date()
-    const proximoHorario = new Date(
-      agora.getFullYear(),
-      agora.getMonth(),
-      agora.getDate(),
-      selectedHour, // hora
-      selectedMinute   // minuto
-    );
+  const showMode = (mode:string) => {
+    setDateMode(mode)
+    setShowDatePicker(true)
+  }
+
+  const handleNotify = async (selectedDate: Date) => {
+    
+    const agora = new Date();
+    const proximoHorario = new Date(selectedDate);
     
     // Se o horário já passou hoje, agende para amanhã
     if(agora > proximoHorario ){
-      proximoHorario.setDate(proximoHorario.getDate() + 1);
+      Alert.alert("Quase lá","Você selecionou uma data anterior a agora!", 
+        [
+          {text: "Desistir", onPress: () => router.push("/")},
+          {text:"Escolher novamente"},
+        ]);
+      return;
     }
     console.log("proximoHorario: ", proximoHorario);
 
@@ -82,23 +94,36 @@ export default function agendarTime() {
     <View style={styles.container}>
       <Text style={styles.title}>Agendar notificação</Text>
 
-      <TimePickerCarousel
-        hour={selectedHour}
-        minute={selectedMinute}
-        setHour={setSelectedHour}
-        setMinute={setSelectedMinute}
-      />
-      {(selectedHour !== null && selectedMinute !== null) && (
+      <View style={styles.dateTime}>
         <Text style={styles.horarioTexto}>
-          Selecionado: {selectedHour.toString().padStart(2, '0')}:
-          {selectedMinute.toString().padStart(2, '0')}
+          Notificação será em: {selectedDate.toLocaleString()}
         </Text>
-      )}
+
+        {showDatePicker && (<DateTimePicker
+        value={selectedDate}
+        mode={dateMode}
+        display="default"
+        onChange={handleDateChange}
+        />)}
+
+        <View style={styles.btnGroup}>
+          <BtnPrimary 
+          title='Selecionar data'
+          onPress={() => showMode('date')}
+          />
+          <BtnPrimary 
+          title='Selecionar hora'
+          onPress={() => showMode('time')}
+          />
+        </View>
+
+      </View>
 
       <BtnPrimary
-        onPress={() => handleNotify(selectedHour, selectedMinute)}
-        title="Agendar">
-      </BtnPrimary>
+        onPress={() => handleNotify(selectedDate)}
+        title="Agendar"
+        //style={{ marginTop: 'auto' }}
+      />
 
     </View>
   );
@@ -108,21 +133,34 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? '#3c3c3c' : '#ffffff',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      backgroundColor: isDark ? '#1c1c1e' : '#f0faff',
       padding: 20,
       paddingTop: 30,
+      justifyContent: 'space-between',
     },
     title: {
       fontSize: 28,
       fontWeight: 'bold',
       marginBottom: 20,
-      color: isDark ? '#ffffff' : '#000000',
+      color: isDark ? '#ffffff' : '#007aff',
+    },
+    dateTime: {
+      backgroundColor: isDark ? '#2c2c2e' : '#e6f0ff', // azul bem clarinho
+      borderRadius: 20,
+      paddingVertical: 24,
+      paddingHorizontal: 18,
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: isDark ? '#3a3a3a' : '#cce0ff', // só contorno leve
+    },
+    btnGroup:{
+      flexDirection: 'row',
+      justifyContent: 'space-around'
     },
     horarioTexto: {
-      marginTop: 20,
       fontSize: 16,
-      color: isDark ? '#dddddd' : '#333333',
+      color: isDark ? '#dddddd' : '#005bbb', // azul mais forte
+      marginBottom: 16,
+      textAlign: 'center',
     },
   });

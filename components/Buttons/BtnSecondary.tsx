@@ -17,13 +17,14 @@ export default function BtnSecondary({ title, onPress }: BtnSecondaryProps) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#ff3b30',
+    alignItems: 'center',
+    borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 25,
-    borderRadius: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 });
