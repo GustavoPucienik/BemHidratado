@@ -23,7 +23,16 @@ Aplicativo simples feito em React Native com Expo, que envia notificações para
 
 ---
 
-## ⚙️ Instalação
+## 📲 Instalação Android (.apk ou .aab)
+
+Se preferir instalar direto no Android:
+
+Baixe o arquivo `.aab` (Android App Bundle):
+
+👉 [Download AAB](https://expo.dev/artifacts/eas/7S8frZVm8PU49VtmD9b1Bk.aab)
+
+
+## ⚙️ Instalação Expo ou sla
 
 1. Clone este repositório:
 ```bash
